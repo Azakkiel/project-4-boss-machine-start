@@ -68,9 +68,12 @@ module.exports = apiRouter;
 
 GET /api/minions to get an array of all minions. D 
 POST /api/minions to create a new minion and save it to the database. D
-GET /api/minions/:minionId to get a single minion by id. D
+GET /api/minions/:minionId to get a single minion by id. D 
+non numeric id check, invalid id check
 PUT /api/minions/:minionId to update a single minion by id. D
+need to return updated minion, non numeric id, invalid id
 DELETE /api/minions/:minionId to delete a single minion by id. D
+non numeric id, invalid id
 
 /api/ideas
 
