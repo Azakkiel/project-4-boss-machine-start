@@ -16,14 +16,31 @@ apiRouter
 
 apiRouter
 .route('/minions/:minionId')
-.get((req,res) => {res.send(db.getFromDatabaseById('minions',req.params.minionId));})
+.get((req,res) => {
+    if (isNaN(req.params.minionId)){
+        res.sendStatus(404);
+    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
+        res.sendStatus(404);
+    }else{
+    res.send(db.getFromDatabaseById('minions',req.params.minionId));}
+})
 .put(bodyParser.json() ,(req,res) => {
+    if (isNaN(req.params.minionId)){
+        res.sendStatus(404);
+    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
+        res.sendStatus(404);
+    } else{
     db.updateInstanceInDatabase('minions', req.body);
-    res.sendStatus(200);
+    res.status(200).send(db.getFromDatabaseById('minions',req.params.minionId))};
 })
 .delete((req,res) => {
+    if (isNaN(req.params.minionId)){
+        res.sendStatus(404);
+    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
+        res.sendStatus(404);
+    } else{
     db.deleteFromDatabasebyId('minions', req.params.minionId);
-    res.sendStatus(200);
+    res.sendStatus(204);}
 });
 
 //ideas routes
@@ -69,9 +86,9 @@ module.exports = apiRouter;
 GET /api/minions to get an array of all minions. D 
 POST /api/minions to create a new minion and save it to the database. D
 GET /api/minions/:minionId to get a single minion by id. D 
-non numeric id check, invalid id check
+non numeric id check, invalid id check D
 PUT /api/minions/:minionId to update a single minion by id. D
-need to return updated minion, non numeric id, invalid id
+need to return updated minion, non numeric id, invalid id D
 DELETE /api/minions/:minionId to delete a single minion by id. D
 non numeric id, invalid id
 
