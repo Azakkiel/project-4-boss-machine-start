@@ -5,6 +5,24 @@ const bodyParser = require('body-parser');
 const app = require('../server');
 const { response } = require('../server');
 
+function checkMinionId (req, res, next) {
+    if (isNaN(req.params.minionId)){
+        res.sendStatus(404);
+    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
+        res.sendStatus(404);
+    };
+    next();
+};
+function checkIdeaId (req, res, next) {
+    if (isNaN(req.params.ideaId)){
+        res.sendStatus(404);
+    }else if(db.getFromDatabaseById('ideas',req.params.ideaId) == null){
+        res.sendStatus(404);
+    };
+    next();
+};
+
+
 //minions routes
 apiRouter
 .route('/minions')
@@ -16,31 +34,16 @@ apiRouter
 
 apiRouter
 .route('/minions/:minionId')
-.get((req,res) => {
-    if (isNaN(req.params.minionId)){
-        res.sendStatus(404);
-    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
-        res.sendStatus(404);
-    }else{
-    res.send(db.getFromDatabaseById('minions',req.params.minionId));}
+.get(checkMinionId, (req,res) => {
+    res.send(db.getFromDatabaseById('minions',req.params.minionId));
 })
-.put(bodyParser.json() ,(req,res) => {
-    if (isNaN(req.params.minionId)){
-        res.sendStatus(404);
-    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
-        res.sendStatus(404);
-    } else{
+.put(bodyParser.json(), checkMinionId ,(req,res) => {
     db.updateInstanceInDatabase('minions', req.body);
-    res.status(200).send(db.getFromDatabaseById('minions',req.params.minionId))};
+    res.status(200).send(db.getFromDatabaseById('minions',req.params.minionId));
 })
-.delete((req,res) => {
-    if (isNaN(req.params.minionId)){
-        res.sendStatus(404);
-    }else if(db.getFromDatabaseById('minions',req.params.minionId) == null){
-        res.sendStatus(404);
-    } else{
+.delete(checkMinionId, (req,res) => {
     db.deleteFromDatabasebyId('minions', req.params.minionId);
-    res.sendStatus(204);}
+    res.sendStatus(204);
 });
 
 //ideas routes
@@ -54,14 +57,14 @@ apiRouter
 
 apiRouter
 .route('/ideas/:ideaId')
-.get((req,res) => {res.send(db.getFromDatabaseById('ideas',req.params.ideaId));})
-.put(bodyParser.json() ,(req,res) => {
+.get(checkIdeaId,(req,res) => {res.send(db.getFromDatabaseById('ideas',req.params.ideaId));})
+.put(bodyParser.json(), checkIdeaId ,(req,res) => {
     db.updateInstanceInDatabase('ideas', req.body);
     res.sendStatus(200);
 })
-.delete((req,res) => {
+.delete(checkIdeaId, (req,res) => {
     db.deleteFromDatabasebyId('ideas', req.params.ideaId);
-    res.sendStatus(200);
+    res.sendStatus(204);
 });
 
 //meetings routes
@@ -74,7 +77,7 @@ apiRouter
 })
 .delete((req,res) => {
     db.deleteAllFromDatabase('meetings');
-    res.sendStatus(200);
+    res.sendStatus(204);
 });
 
 module.exports = apiRouter;
