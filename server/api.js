@@ -4,6 +4,7 @@ const db = require('./db');
 const bodyParser = require('body-parser');
 const app = require('../server');
 const { response } = require('../server');
+const checkMillionDollarIdea = require('./checkMillionDollarIdea');
 
 function checkMinionId (req, res, next) {
     if (isNaN(req.params.minionId)){
@@ -38,8 +39,8 @@ apiRouter
     res.send(db.getFromDatabaseById('minions',req.params.minionId));
 })
 .put(bodyParser.json(), checkMinionId ,(req,res) => {
-    db.updateInstanceInDatabase('minions', req.body);
-    res.status(200).send(db.getFromDatabaseById('minions',req.params.minionId));
+    let updatedMinion = db.updateInstanceInDatabase('minions', req.body);
+    res.status(200).send(updatedMinion);
 })
 .delete(checkMinionId, (req,res) => {
     db.deleteFromDatabasebyId('minions', req.params.minionId);
@@ -50,7 +51,7 @@ apiRouter
 apiRouter
 .route('/ideas')
 .get((req,res) => {res.send(db.getAllFromDatabase('ideas'));})//get all ideas
-.post(bodyParser.json(),(req,res) =>{
+.post(bodyParser.json(),checkMillionDollarIdea,(req,res) =>{
     const newIdea = db.addToDatabase('ideas', req.body);
     res.status(201).send(newIdea);
 });
@@ -58,9 +59,9 @@ apiRouter
 apiRouter
 .route('/ideas/:ideaId')
 .get(checkIdeaId,(req,res) => {res.send(db.getFromDatabaseById('ideas',req.params.ideaId));})
-.put(bodyParser.json(), checkIdeaId ,(req,res) => {
-    db.updateInstanceInDatabase('ideas', req.body);
-    res.status(200).send(db.getFromDatabaseById('ideas',req.params.ideaId));
+.put(bodyParser.json(), checkIdeaId ,checkMillionDollarIdea,(req,res) => {
+    let updatedIdea = db.updateInstanceInDatabase('ideas', req.body);
+    res.status(200).send(updatedIdea);
 })
 .delete(checkIdeaId, (req,res) => {
     db.deleteFromDatabasebyId('ideas', req.params.ideaId);
