@@ -38,8 +38,8 @@ apiRouter
     res.send(db.getFromDatabaseById('minions',req.params.minionId));
 })
 .put(bodyParser.json(), checkMinionId ,(req,res) => {
-    db.updateInstanceInDatabase('minions', req.body);
-    res.status(200).send(db.getFromDatabaseById('minions',req.params.minionId));
+    let updatedMinion = db.updateInstanceInDatabase('minions', req.body);
+    res.status(200).send(updatedMinion);
 })
 .delete(checkMinionId, (req,res) => {
     db.deleteFromDatabasebyId('minions', req.params.minionId);
@@ -59,8 +59,8 @@ apiRouter
 .route('/ideas/:ideaId')
 .get(checkIdeaId,(req,res) => {res.send(db.getFromDatabaseById('ideas',req.params.ideaId));})
 .put(bodyParser.json(), checkIdeaId ,(req,res) => {
-    db.updateInstanceInDatabase('ideas', req.body);
-    res.status(200).send(db.getFromDatabaseById('ideas',req.params.ideaId));
+    let updatedIdea = db.updateInstanceInDatabase('ideas', req.body);
+    res.status(200).send(updatedIdea);
 })
 .delete(checkIdeaId, (req,res) => {
     db.deleteFromDatabasebyId('ideas', req.params.ideaId);
